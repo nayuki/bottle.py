@@ -1053,7 +1053,11 @@ class Bottle(object):
             exc_info = environ.get('bottle.exc_info')
             if exc_info is not None:
                 del environ['bottle.exc_info']
-            start_response(response._wsgi_status_line(), response.headerlist, exc_info)
+            try:
+                start_response(response._wsgi_status_line(), response.headerlist, exc_info)
+            except:
+                if hasattr(out, 'close'): out.close()
+                raise
             return out
         except (KeyboardInterrupt, SystemExit, MemoryError):
             raise
